@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>カスタムテンプレート - FiveM CMS ドキュメント</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0d1117; --bg-card: #161b22; --bg-hover: #21262d;
+            --accent: #58a6ff; --accent-green: #3fb950; --accent-purple: #a371f7;
+            --text: #c9d1d9; --text-dim: #8b949e; --border: #30363d;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+        .layout { display: flex; min-height: 100vh; }
+        .sidebar { width: 280px; background: var(--bg-card); border-right: 1px solid var(--border); padding: 20px 0; position: fixed; height: 100vh; overflow-y: auto; }
+        .sidebar-logo { padding: 0 20px 20px; font-size: 20px; font-weight: 700; color: var(--accent); border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+        .sidebar-section { padding: 10px 20px; font-size: 12px; text-transform: uppercase; color: var(--text-dim); letter-spacing: 1px; }
+        .sidebar a { display: block; padding: 10px 20px; color: var(--text); text-decoration: none; font-size: 14px; transition: all 0.2s; }
+        .sidebar a:hover { background: var(--bg-hover); color: var(--accent); }
+        .sidebar a.active { background: var(--bg-hover); color: var(--accent); border-right: 3px solid var(--accent); }
+        .main { flex: 1; margin-left: 280px; padding: 40px 60px; max-width: 900px; }
+        h1 { font-size: 32px; margin-bottom: 10px; color: #fff; }
+        h2 { font-size: 24px; margin: 40px 0 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border); color: #fff; }
+        h3 { font-size: 18px; margin: 30px 0 15px; color: #fff; }
+        p { margin-bottom: 15px; }
+        .lead { font-size: 18px; color: var(--text-dim); margin-bottom: 30px; }
+        code { background: var(--bg-card); padding: 2px 6px; border-radius: 4px; font-family: 'SF Mono', Monaco, monospace; font-size: 14px; }
+        pre { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; overflow-x: auto; margin: 20px 0; }
+        pre code { background: none; padding: 0; }
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge-basic { background: rgba(88, 166, 255, 0.2); color: var(--accent); }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background: var(--bg-card); color: #fff; font-weight: 600; }
+        .alert { padding: 15px 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid; }
+        .alert-info { background: rgba(88, 166, 255, 0.1); border-color: var(--accent); }
+        .alert-tip { background: rgba(59, 185, 80, 0.1); border-color: var(--accent-green); }
+        ul, ol { margin: 15px 0; padding-left: 25px; }
+        li { margin: 8px 0; }
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <nav class="sidebar">
+            <div class="sidebar-logo">📖 FiveM CMS Docs</div>
+            <div class="sidebar-section">はじめに</div>
+            <a href="index.html">概要</a>
+            <a href="getting-started.html">クイックスタート</a>
+            <div class="sidebar-section">基本機能</div>
+            <a href="import.html">インポート</a>
+            <a href="export.html">エクスポート</a>
+            <a href="tables.html">テーブル管理</a>
+            <div class="sidebar-section">高度な機能</div>
+            <a href="schema.html">カスタムスキーマ</a>
+            <a href="templates.html" class="active">カスタムテンプレート</a>
+            <a href="team.html">チーム機能</a>
+            <div class="sidebar-section">リファレンス</div>
+            <a href="plans.html">料金プラン</a>
+            <a href="faq.html">FAQ</a>
+        </nav>
+        
+        <main class="main">
+            <h1>カスタムテンプレート</h1>
+            <p class="lead">任意のスクリプト形式でLuaを出力する <span class="badge badge-basic">Basic+</span></p>
+            
+            <h2>概要</h2>
+            <p>デフォルトのQBCore/ESX/Qbox形式以外で出力したい場合、カスタムテンプレートを作成できます。ox_inventory、jg-advancedgarages、eco-craftingなど、任意のスクリプト形式に対応可能です。</p>
+            
+            <h2>テンプレートの作成</h2>
+            <ol>
+                <li>エクスポート画面を開く</li>
+                <li>「+ New Template」ボタンをクリック</li>
+                <li>テンプレート名と内容を入力</li>
+                <li>「保存」をクリック</li>
+            </ol>
+            
+            <h2>テンプレート構文</h2>
+            <p>テンプレートでは以下の構文が使用できます。</p>
+            
+            <h3>変数の出力</h3>
+            <pre><code>{{variable}}</code></pre>
+            <p>データのフィールド値をそのまま出力します。</p>
+            
+            <h3>エスケープ出力</h3>
+            <pre><code>{{escape:variable}}</code></pre>
+            <p>Lua文字列としてエスケープして出力します。シングルクォートやバックスラッシュが正しくエスケープされます。</p>
+            
+            <h3>真偽値出力</h3>
+            <pre><code>{{bool:variable}}</code></pre>
+            <p>true/false をLuaの真偽値として出力します。</p>
+            
+            <h3>行ループ</h3>
+            <pre><code>{{#rows}}
+    -- 各行に対して繰り返し
+{{/rows}}</code></pre>
+            <p>全てのデータ行をループして出力します。</p>
+            
+            <h2>テンプレート例</h2>
+            
+            <h3>ox_inventory Items</h3>
+            <pre><code>return {
+{{#rows}}
+    ['{{itemkey}}'] = {
+        label = '{{escape:label}}',
+        weight = {{weight}},
+        stack = {{bool:canstuck}},
+        close = {{bool:shouldclose}},
+        description = '{{escape:description}}',
+    },
+{{/rows}}
+}</code></pre>
+            
+            <h3>jg-advancedgarages Vehicles</h3>
+            <pre><code>Config.Vehicles = {
+{{#rows}}
+    ['{{model}}'] = {
+        name = '{{escape:label}}',
+        brand = '{{escape:brand}}',
+        price = {{price}},
+        category = '{{category}}',
+        shop = '{{shop}}',
+    },
+{{/rows}}
+}</code></pre>
+            
+            <h3>eco-crafting Recipes</h3>
+            <pre><code>Config.Recipes = {
+{{#rows}}
+    ['{{recipeid}}'] = {
+        name = '{{escape:label}}',
+        amount = {{amount}},
+        time = {{crafttime}},
+        ingredients = {
+            -- カスタムカラムで材料を定義
+        },
+    },
+{{/rows}}
+}</code></pre>
+            
+            <h2>利用可能な変数</h2>
+            <p>各テーブルで利用可能な変数は、スキーマで定義されたカラム名です。</p>
+            
+            <h3>Items デフォルト</h3>
+            <ul>
+                <li><code>itemkey</code> - アイテムキー</li>
+                <li><code>label</code> - 表示名</li>
+                <li><code>weight</code> - 重量</li>
+                <li><code>canstuck</code> - スタック可能</li>
+                <li><code>useable</code> - 使用可能</li>
+                <li><code>shouldclose</code> - 使用後に閉じる</li>
+                <li><code>description</code> - 説明</li>
+            </ul>
+            
+            <div class="alert alert-tip">
+                <strong>💡 ヒント:</strong> カスタムスキーマで追加したカラムも、テンプレート内で <code>{{columnname}}</code> として使用できます。
+            </div>
+            
+            <h2>テンプレートの管理</h2>
+            <ul>
+                <li><strong>編集</strong>: テンプレート名をクリックして編集</li>
+                <li><strong>削除</strong>: テンプレート行の 🗑️ ボタンをクリック</li>
+                <li><strong>プレビュー</strong>: テンプレートを選択して出力をプレビュー</li>
+            </ul>
+            
+            <div class="alert alert-info">
+                <strong>📌 注意:</strong> テンプレートはチームごとに保存されます。チームメンバー全員が同じテンプレートを使用できます。
+            </div>
+        </main>
+    </div>
+</body>
+</html>

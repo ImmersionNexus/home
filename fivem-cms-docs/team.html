@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>チーム機能 - FiveM CMS ドキュメント</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0d1117; --bg-card: #161b22; --bg-hover: #21262d;
+            --accent: #58a6ff; --accent-green: #3fb950; --accent-purple: #a371f7;
+            --text: #c9d1d9; --text-dim: #8b949e; --border: #30363d;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+        .layout { display: flex; min-height: 100vh; }
+        .sidebar { width: 280px; background: var(--bg-card); border-right: 1px solid var(--border); padding: 20px 0; position: fixed; height: 100vh; overflow-y: auto; }
+        .sidebar-logo { padding: 0 20px 20px; font-size: 20px; font-weight: 700; color: var(--accent); border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+        .sidebar-section { padding: 10px 20px; font-size: 12px; text-transform: uppercase; color: var(--text-dim); letter-spacing: 1px; }
+        .sidebar a { display: block; padding: 10px 20px; color: var(--text); text-decoration: none; font-size: 14px; transition: all 0.2s; }
+        .sidebar a:hover { background: var(--bg-hover); color: var(--accent); }
+        .sidebar a.active { background: var(--bg-hover); color: var(--accent); border-right: 3px solid var(--accent); }
+        .main { flex: 1; margin-left: 280px; padding: 40px 60px; max-width: 900px; }
+        h1 { font-size: 32px; margin-bottom: 10px; color: #fff; }
+        h2 { font-size: 24px; margin: 40px 0 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border); color: #fff; }
+        h3 { font-size: 18px; margin: 30px 0 15px; color: #fff; }
+        p { margin-bottom: 15px; }
+        .lead { font-size: 18px; color: var(--text-dim); margin-bottom: 30px; }
+        code { background: var(--bg-card); padding: 2px 6px; border-radius: 4px; font-family: 'SF Mono', Monaco, monospace; font-size: 14px; }
+        pre { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; overflow-x: auto; margin: 20px 0; }
+        pre code { background: none; padding: 0; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background: var(--bg-card); color: #fff; font-weight: 600; }
+        .alert { padding: 15px 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid; }
+        .alert-info { background: rgba(88, 166, 255, 0.1); border-color: var(--accent); }
+        .alert-tip { background: rgba(59, 185, 80, 0.1); border-color: var(--accent-green); }
+        ul, ol { margin: 15px 0; padding-left: 25px; }
+        li { margin: 8px 0; }
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <nav class="sidebar">
+            <div class="sidebar-logo">📖 FiveM CMS Docs</div>
+            <div class="sidebar-section">はじめに</div>
+            <a href="index.html">概要</a>
+            <a href="getting-started.html">クイックスタート</a>
+            <div class="sidebar-section">基本機能</div>
+            <a href="import.html">インポート</a>
+            <a href="export.html">エクスポート</a>
+            <a href="tables.html">テーブル管理</a>
+            <div class="sidebar-section">高度な機能</div>
+            <a href="schema.html">カスタムスキーマ</a>
+            <a href="templates.html">カスタムテンプレート</a>
+            <a href="team.html" class="active">チーム機能</a>
+            <div class="sidebar-section">リファレンス</div>
+            <a href="plans.html">料金プラン</a>
+            <a href="faq.html">FAQ</a>
+        </nav>
+        
+        <main class="main">
+            <h1>チーム機能</h1>
+            <p class="lead">メンバーを招待して共同作業する</p>
+            
+            <h2>概要</h2>
+            <p>FiveM CMSでは、チームを作成してメンバーと一緒にデータを管理できます。役割ごとに権限を設定し、安全に共同作業ができます。</p>
+            
+            <h2>役割と権限</h2>
+            <table>
+                <tr>
+                    <th>役割</th>
+                    <th>データ編集</th>
+                    <th>エクスポート</th>
+                    <th>メンバー管理</th>
+                    <th>設定変更</th>
+                </tr>
+                <tr>
+                    <td><strong>Owner</strong></td>
+                    <td>✅</td>
+                    <td>✅</td>
+                    <td>✅</td>
+                    <td>✅</td>
+                </tr>
+                <tr>
+                    <td><strong>Admin</strong></td>
+                    <td>✅</td>
+                    <td>✅</td>
+                    <td>✅</td>
+                    <td>❌</td>
+                </tr>
+                <tr>
+                    <td><strong>Member</strong></td>
+                    <td>✅</td>
+                    <td>✅</td>
+                    <td>❌</td>
+                    <td>❌</td>
+                </tr>
+                <tr>
+                    <td><strong>Viewer</strong></td>
+                    <td>❌</td>
+                    <td>✅</td>
+                    <td>❌</td>
+                    <td>❌</td>
+                </tr>
+            </table>
+            
+            <h2>メンバーを招待する</h2>
+            <ol>
+                <li>サイドバーの「Members」をクリック</li>
+                <li>「招待」ボタンをクリック</li>
+                <li>招待したい人のメールアドレスを入力</li>
+                <li>役割を選択（Admin / Member / Viewer）</li>
+                <li>「招待を送信」をクリック</li>
+            </ol>
+            
+            <h3>既存ユーザーの場合</h3>
+            <p>入力したメールアドレスが既にFiveM CMSに登録されている場合、即座にチームに追加されます。</p>
+            
+            <h3>新規ユーザーの場合</h3>
+            <p>登録されていないメールアドレスの場合、招待リンクが生成されます。このリンクを相手に共有してください。</p>
+            <ol>
+                <li>招待リンクをコピー</li>
+                <li>Discord、LINE、メールなどで相手に送信</li>
+                <li>相手がリンクを開いてパスワードを設定</li>
+                <li>チームに参加完了</li>
+            </ol>
+            
+            <div class="alert alert-info">
+                <strong>📌 招待リンクの有効期限:</strong> 招待リンクは7日間有効です。期限が切れた場合は再度招待してください。
+            </div>
+            
+            <h2>メンバーの管理</h2>
+            
+            <h3>役割の変更</h3>
+            <ol>
+                <li>Members画面でメンバーを確認</li>
+                <li>役割のドロップダウンから新しい役割を選択</li>
+            </ol>
+            
+            <h3>メンバーの削除</h3>
+            <ol>
+                <li>Members画面で削除したいメンバーの 🗑️ ボタンをクリック</li>
+                <li>確認ダイアログで「OK」をクリック</li>
+            </ol>
+            
+            <div class="alert alert-tip">
+                <strong>💡 注意:</strong> Ownerは削除できません。チームの所有権を移転するには、別のメンバーをOwnerに設定してください。
+            </div>
+            
+            <h2>保留中の招待</h2>
+            <p>まだ承認されていない招待を確認・キャンセルできます。</p>
+            <ul>
+                <li>Members画面の「保留中の招待」セクションを確認</li>
+                <li>キャンセルしたい招待の 🗑️ ボタンをクリック</li>
+            </ul>
+            
+            <h2>メンバー数の上限</h2>
+            <table>
+                <tr>
+                    <th>プラン</th>
+                    <th>最大メンバー数</th>
+                </tr>
+                <tr>
+                    <td>Free</td>
+                    <td>1人（オーナーのみ）</td>
+                </tr>
+                <tr>
+                    <td>Basic</td>
+                    <td>2人</td>
+                </tr>
+                <tr>
+                    <td>Pro</td>
+                    <td>5人</td>
+                </tr>
+                <tr>
+                    <td>Team</td>
+                    <td>無制限</td>
+                </tr>
+            </table>
+        </main>
+    </div>
+</body>
+</html>
