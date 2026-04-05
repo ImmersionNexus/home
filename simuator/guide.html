@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <title>使い方ガイド — 犯罪報酬シミュレーター</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+    :root {
+        --bg0:        #07090e;
+        --bg1:        #0d1119;
+        --bg2:        #121820;
+        --bg3:        #1a2230;
+        --bg4:        #222c3c;
+        --accent:     #50d296;
+        --accent-dim: rgba(80,210,150,0.1);
+        --accent-glow:rgba(80,210,150,0.25);
+        --yellow:     #f0be3c;
+        --red:        #f05a5a;
+        --blue:       #4a9eff;
+        --border:     rgba(255,255,255,0.07);
+        --border-hi:  rgba(255,255,255,0.14);
+        --text-0:     #d0dce8;
+        --text-1:     #7a90a8;
+        --text-2:     #3a4a5a;
+        --mono:       'JetBrains Mono', monospace;
+        --sans:       'Noto Sans JP', sans-serif;
+        --r:          8px;
+        --r-lg:       12px;
+    }
+    :root.light {
+        --bg0:        #f0f2f5;
+        --bg1:        #ffffff;
+        --bg2:        #f5f7fa;
+        --bg3:        #e8ecf0;
+        --bg4:        #d0d8e0;
+        --accent:     #12a06a;
+        --accent-dim: rgba(18,160,106,0.1);
+        --accent-glow:rgba(18,160,106,0.25);
+        --yellow:     #c07800;
+        --red:        #d03030;
+        --blue:       #1a6fd0;
+        --border:     rgba(0,0,0,0.1);
+        --border-hi:  rgba(0,0,0,0.2);
+        --text-0:     #1a2230;
+        --text-1:     #4a6080;
+        --text-2:     #8090a8;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        background: var(--bg0);
+        color: var(--text-0);
+        font-family: var(--sans);
+        font-size: 15px;
+        line-height: 1.8;
+    }
+
+    /* ── HEADER ── */
+    header {
+        background: var(--bg1);
+        border-bottom: 1px solid var(--border);
+        padding: 0 32px;
+        height: 52px;
+        display: flex;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+    .header-inner {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .logo {
+        font-family: var(--mono);
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-0);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .logo-dot {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 8px var(--accent);
+        animation: pulse 2.4s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .btn-back {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        color: var(--text-1);
+        text-decoration: none;
+        padding: 6px 14px;
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        transition: all 0.15s;
+    }
+    .btn-back:hover { border-color: var(--accent); color: var(--accent); }
+    .theme-toggle {
+        width: 32px; height: 32px;
+        border-radius: 50%;
+        border: 1px solid var(--border-hi);
+        background: var(--bg2);
+        color: var(--text-1);
+        font-size: 14px;
+        cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        transition: all 0.15s;
+        outline: none;
+    }
+    .theme-toggle:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+    /* ── CONTENT ── */
+    .content {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 48px 24px 80px;
+    }
+
+    /* ── PAGE TITLE ── */
+    .page-title {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 12px;
+    }
+    h1 {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--text-0);
+        margin-bottom: 10px;
+        line-height: 1.3;
+    }
+    .subtitle {
+        color: var(--text-1);
+        font-size: 15px;
+        margin-bottom: 48px;
+        padding-bottom: 32px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    /* ── SECTION ── */
+    .section { margin-bottom: 52px; }
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+    .step-num {
+        width: 32px; height: 32px;
+        border-radius: 50%;
+        background: var(--accent-dim);
+        border: 1px solid var(--accent);
+        color: var(--accent);
+        font-family: var(--mono);
+        font-size: 13px;
+        font-weight: 700;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+    }
+    h2 {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-0);
+    }
+    p { color: var(--text-1); margin-bottom: 14px; }
+    p:last-child { margin-bottom: 0; }
+
+    /* ── CARD ── */
+    .card {
+        background: var(--bg1);
+        border: 1px solid var(--border);
+        border-radius: var(--r-lg);
+        padding: 20px 24px;
+        margin-bottom: 14px;
+    }
+    .card:last-child { margin-bottom: 0; }
+
+    /* ── FIELD GUIDE ── */
+    .field-list { display: flex; flex-direction: column; gap: 0; }
+    .field-item {
+        display: grid;
+        grid-template-columns: 160px 1fr;
+        gap: 16px;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--border);
+        align-items: start;
+    }
+    .field-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .field-item:first-child { padding-top: 0; }
+    .field-name {
+        font-family: var(--mono);
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--text-0);
+        padding-top: 2px;
+    }
+    .field-desc { color: var(--text-1); font-size: 14px; line-height: 1.7; }
+    .field-desc strong { color: var(--text-0); font-weight: 500; }
+
+    /* ── BADGE ── */
+    .badge {
+        display: inline-block;
+        font-family: var(--mono);
+        font-size: 10px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        vertical-align: middle;
+        margin-left: 4px;
+    }
+    .badge-green  { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(80,210,150,0.2); }
+    .badge-yellow { background: rgba(240,190,60,0.12); color: var(--yellow); border: 1px solid rgba(240,190,60,0.2); }
+    .badge-red    { background: rgba(240,90,90,0.12); color: var(--red); border: 1px solid rgba(240,90,90,0.2); }
+    .badge-blue   { background: rgba(74,158,255,0.12); color: var(--blue); border: 1px solid rgba(74,158,255,0.2); }
+
+    /* ── EXAMPLE BOX ── */
+    .example {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--accent);
+        border-radius: 0 var(--r) var(--r) 0;
+        padding: 16px 20px;
+        margin-top: 16px;
+    }
+    .example-label {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 10px;
+    }
+    .example-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .example-table td {
+        padding: 5px 0;
+        border-bottom: 1px solid var(--border);
+        color: var(--text-1);
+    }
+    .example-table td:first-child {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--text-0);
+        width: 160px;
+        padding-right: 16px;
+    }
+    .example-table tr:last-child td { border-bottom: none; }
+    .val { font-family: var(--mono); font-size: 12px; color: var(--accent); }
+
+    /* ── FORMULA ── */
+    .formula-box {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        padding: 16px 20px;
+        margin: 16px 0;
+        text-align: center;
+    }
+    .formula {
+        font-family: var(--mono);
+        font-size: 13px;
+        color: var(--text-0);
+        line-height: 2;
+    }
+    .formula .op { color: var(--text-2); margin: 0 6px; }
+    .formula .hi { color: var(--accent); font-weight: 700; }
+    .formula .result { color: var(--yellow); font-weight: 700; font-size: 15px; }
+
+    /* ── TIP ── */
+    .tip {
+        display: flex;
+        gap: 14px;
+        align-items: flex-start;
+        background: rgba(74,158,255,0.06);
+        border: 1px solid rgba(74,158,255,0.18);
+        border-radius: var(--r);
+        padding: 14px 18px;
+        margin-top: 16px;
+    }
+    .tip-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .tip-body { font-size: 13px; color: var(--text-1); line-height: 1.7; }
+    .tip-body strong { color: var(--blue); }
+
+    /* ── RESULT GUIDE ── */
+    .result-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 10px;
+        margin-top: 16px;
+    }
+    .result-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        padding: 14px 16px;
+    }
+    .result-card-label {
+        font-family: var(--mono);
+        font-size: 9px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--text-2);
+        margin-bottom: 6px;
+    }
+    .result-card-desc { font-size: 13px; color: var(--text-1); line-height: 1.6; }
+
+    /* ── FLOW ── */
+    .flow {
+        display: flex;
+        align-items: stretch;
+        gap: 0;
+        margin: 20px 0;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+    .flow-step {
+        flex: 1;
+        min-width: 120px;
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        padding: 12px 14px;
+        position: relative;
+        text-align: center;
+    }
+    .flow-step-num {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--accent);
+        margin-bottom: 4px;
+    }
+    .flow-step-text {
+        font-size: 13px;
+        color: var(--text-0);
+        font-weight: 500;
+    }
+
+    /* ── DIVIDER ── */
+    hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+    /* ── FOOTER ── */
+    .guide-footer {
+        text-align: center;
+        padding-top: 32px;
+        border-top: 1px solid var(--border);
+    }
+    .guide-footer p { font-size: 13px; margin-bottom: 16px; }
+    .btn-main {
+        display: inline-block;
+        background: var(--accent);
+        color: #fff;
+        font-family: var(--mono);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        padding: 12px 32px;
+        border-radius: var(--r);
+        text-decoration: none;
+        transition: all 0.15s;
+    }
+    .btn-main:hover { filter: brightness(1.1); box-shadow: 0 0 20px var(--accent-glow); }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-inner">
+        <div class="logo">
+            <span class="logo-dot"></span>
+            犯罪報酬シミュレーター
+        </div>
+        <div class="header-right">
+            <a href="index.html" class="btn-back">← シミュレーターに戻る</a>
+            <button class="theme-toggle" onclick="toggleTheme()" title="テーマ切替">
+                <span id="theme-icon">☀</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<div class="content">
+
+    <div class="page-title">USAGE GUIDE</div>
+    <h1>使い方ガイド</h1>
+    <p class="subtitle">
+        このシミュレーターは、FiveMサーバーのヒスト（強盗イベント）で得られる報酬の平均額を統計的に計算するツールです。<br>
+        アイテムの売却単価や個数を調整しながら、報酬バランスを確認できます。
+    </p>
+
+    <!-- ── 基本的な使い方 ── -->
+    <div class="section">
+        <div class="section-header">
+            <div class="step-num">1</div>
+            <h2>アイテムを追加する</h2>
+        </div>
+        <p>左の「報酬内容の設定」パネルから、ヒストで入手できる報酬アイテムを1つずつ追加します。</p>
+
+        <div class="flow">
+            <div class="flow-step">
+                <div class="flow-step-num">STEP 1</div>
+                <div class="flow-step-text">アイテム名を入力</div>
+            </div>
+            <div class="flow-step">
+                <div class="flow-step-num">STEP 2</div>
+                <div class="flow-step-text">個数・単価を設定</div>
+            </div>
+            <div class="flow-step">
+                <div class="flow-step-num">STEP 3</div>
+                <div class="flow-step-text">確率・試行数を設定</div>
+            </div>
+            <div class="flow-step">
+                <div class="flow-step-num">STEP 4</div>
+                <div class="flow-step-text">「+ 追加」を押す</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="field-list">
+                <div class="field-item">
+                    <div class="field-name">アイテム名</div>
+                    <div class="field-desc">アイテムの識別名。管理用なので自由に入力できます。<br><em>例: ms_ammo_pistol、yacht_gold</em></div>
+                </div>
+                <div class="field-item">
+                    <div class="field-name">個数タイプ</div>
+                    <div class="field-desc">
+                        <strong>固定値</strong> — 毎回同じ個数が手に入る場合<br>
+                        <strong>ランダム</strong> — 個数が最小〜最大の範囲でランダムになる場合<br>
+                        例: <code>math.random(10, 15)</code> なら「ランダム、10〜15」
+                    </div>
+                </div>
+                <div class="field-item">
+                    <div class="field-name">売却単価タイプ</div>
+                    <div class="field-desc">
+                        <strong>固定値</strong> — 単価が決まっている場合<br>
+                        <strong>ランダム</strong> — Yachtのように起動時に価格がランダムで決まる場合<br>
+                        例: <code>math.random(420000, 620000)</code> なら「ランダム、420000〜620000」
+                    </div>
+                </div>
+                <div class="field-item">
+                    <div class="field-name">ドロップ確率<span class="badge badge-yellow">重要</span></div>
+                    <div class="field-desc">
+                        <strong>1回の抽選でアイテムが出る確率（0〜100%）</strong><br>
+                        100% → 必ず手に入る<br>
+                        50% → 2回に1回の確率で手に入る<br>
+                        設定ファイルにドロップ確率の記述がなければ <strong>100</strong> のままでOK
+                    </div>
+                </div>
+                <div class="field-item">
+                    <div class="field-name">ドロップ数<span class="badge badge-yellow">重要</span></div>
+                    <div class="field-desc">
+                        <strong>抽選を何回行うか（試行回数）</strong><br>
+                        クレートが10個あってそれぞれ個別に抽選するなら <strong>10</strong><br>
+                        1か所から1種類だけ取るなら <strong>1</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tip">
+            <div class="tip-icon">💡</div>
+            <div class="tip-body">
+                <strong>ドロップ確率 × ドロップ数の関係</strong>：確率98%のクレートが10個あるなら「確率: 98、試行数: 10」と設定します。「確率: 980」とするのは間違いです。
+            </div>
+        </div>
+    </div>
+
+    <!-- ── 期待値の仕組み ── -->
+    <div class="section">
+        <div class="section-header">
+            <div class="step-num">2</div>
+            <h2>期待値（理論値）の仕組み</h2>
+        </div>
+        <p>アイテムを追加すると画面右上に「期待値（理論値）」が表示されます。これはシミュレーションを行わずに数学的に計算した理論上の平均額です。</p>
+
+        <div class="formula-box">
+            <div class="formula">
+                期待値
+                <span class="op">=</span>
+                <span class="hi">ドロップ数</span>
+                <span class="op">×</span>
+                <span class="hi">確率</span>
+                <span class="op">×</span>
+                <span class="hi">個数の平均</span>
+                <span class="op">×</span>
+                <span class="hi">単価の平均</span>
+            </div>
+        </div>
+
+        <div class="example">
+            <div class="example-label">計算例 — Mothership: ms_ammo_pistol</div>
+            <table class="example-table">
+                <tr><td>ドロップ数</td><td>10クレート</td></tr>
+                <tr><td>ドロップ確率</td><td>98%（= 0.98）</td></tr>
+                <tr><td>個数</td><td>ランダム 10〜15 → 平均 12.5個</td></tr>
+                <tr><td>売却単価</td><td>¥395,000</td></tr>
+                <tr><td>このアイテムの期待値</td><td class="val">10 × 0.98 × 12.5 × 395,000 ≈ 4,838万円</td></tr>
+            </table>
+        </div>
+
+        <div class="tip">
+            <div class="tip-icon">💡</div>
+            <div class="tip-body">
+                アイテムが複数種類ある場合は、それぞれの期待値を合計したものが全体の期待値になります。画面下の「アイテム別 期待値内訳」テーブルで各アイテムの寄与割合も確認できます。
+            </div>
+        </div>
+    </div>
+
+    <!-- ── シミュレーション実行 ── -->
+    <div class="section">
+        <div class="section-header">
+            <div class="step-num">3</div>
+            <h2>シミュレーションを実行する</h2>
+        </div>
+        <p>設定した条件でランダム抽選を大量に繰り返し、実際の報酬がどのくらいのばらつきで分布するかを統計として表示します。</p>
+
+        <div class="card">
+            <div class="field-list">
+                <div class="field-item">
+                    <div class="field-name">試行回数</div>
+                    <div class="field-desc">
+                        シミュレーションを何回繰り返すか。回数が多いほど結果が安定します。<br>
+                        <span class="badge badge-blue">10,000回</span> 素早く確認したいとき<br>
+                        <span class="badge badge-blue">50,000回</span> 通常の確認（推奨）<br>
+                        <span class="badge badge-blue">200,000回</span> 精度が必要なとき
+                    </div>
+                </div>
+                <div class="field-item">
+                    <div class="field-name">目標平均額</div>
+                    <div class="field-desc">
+                        目指したい平均報酬額（万円単位）を入力します。グラフに目標ラインが表示され、シミュレーション結果との差分（±○万円）が確認できます。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="result-grid">
+            <div class="result-card">
+                <div class="result-card-label">平均</div>
+                <div class="result-card-desc">シミュレーション全試行の平均報酬額。目標値との差も表示されます。</div>
+            </div>
+            <div class="result-card">
+                <div class="result-card-label">中央値</div>
+                <div class="result-card-desc">全結果を並べたときの真ん中の値。外れ値の影響を受けにくいです。</div>
+            </div>
+            <div class="result-card">
+                <div class="result-card-label">標準偏差</div>
+                <div class="result-card-desc">報酬のばらつきの大きさ。値が小さいほど毎回の結果が安定しています。</div>
+            </div>
+            <div class="result-card">
+                <div class="result-card-label">最小 / 最大</div>
+                <div class="result-card-desc">試行した中での最低・最高報酬額。最悪と最良のケースの目安になります。</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── 設定例 ── -->
+    <div class="section">
+        <div class="section-header">
+            <div class="step-num">4</div>
+            <h2>設定例</h2>
+        </div>
+
+        <p>代表的なヒストのconfig.luaをどう入力するか、具体例で説明します。</p>
+
+        <div class="card">
+            <p style="font-family:var(--mono);font-size:12px;color:var(--text-2);margin-bottom:12px">be_mothership — config.lua</p>
+            <div class="example" style="margin-top:0">
+                <div class="example-label">rewards の1項目をこう入力する</div>
+                <table class="example-table">
+                    <tr>
+                        <td>config.luaの記述</td>
+                        <td style="font-family:var(--mono);font-size:11px;color:var(--text-0)">{ name = 'ms_ammo_pistol', count = function() return math.random(10, 15) end, sellPrice = 395000 }</td>
+                    </tr>
+                    <tr><td>アイテム名</td><td class="val">ms_ammo_pistol</td></tr>
+                    <tr><td>個数タイプ</td><td class="val">ランダム、10〜15</td></tr>
+                    <tr><td>売却単価タイプ</td><td class="val">固定値、395000</td></tr>
+                    <tr><td>ドロップ確率</td><td class="val">98（コード上 dice1 &lt;= 98 の条件）</td></tr>
+                    <tr><td>ドロップ数</td><td class="val">10（クレートが10個あるため）</td></tr>
+                </table>
+            </div>
+            <div class="tip" style="margin-top:14px">
+                <div class="tip-icon">💡</div>
+                <div class="tip-body">アイテムが3種類（pistol/rifle/smg）あり、ランダムで1種選ばれる場合は、各アイテムのドロップ確率を <strong>98 ÷ 3 ≈ 33</strong> にするか、ドロップ数を <strong>10 ÷ 3 ≈ 3.3</strong> として入力すると近い結果になります。</div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+            <p style="font-family:var(--mono);font-size:12px;color:var(--text-2);margin-bottom:12px">rainmad yacht — config.lua</p>
+            <div class="example" style="margin-top:0">
+                <div class="example-label">yacht_gold の設定</div>
+                <table class="example-table">
+                    <tr>
+                        <td>config.luaの記述</td>
+                        <td style="font-family:var(--mono);font-size:11px;color:var(--text-0)">{itemName = 'yacht_gold', count = 25, sellPrice = math.random(420000, 620000)}</td>
+                    </tr>
+                    <tr><td>アイテム名</td><td class="val">yacht_gold</td></tr>
+                    <tr><td>個数タイプ</td><td class="val">固定値、25</td></tr>
+                    <tr><td>売却単価タイプ</td><td class="val">ランダム、420000〜620000</td></tr>
+                    <tr><td>ドロップ確率</td><td class="val">100（必ず手に入る）</td></tr>
+                    <tr><td>ドロップ数</td><td class="val">1</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── アイテムの編集・削除 ── -->
+    <div class="section">
+        <div class="section-header">
+            <div class="step-num">5</div>
+            <h2>アイテムの編集・削除</h2>
+        </div>
+        <p>「追加済みアイテム」パネルの各行にある <strong>✎</strong> ボタンを押すとフォームに値が読み込まれ、編集できます。更新が完了したら「✎ 更新」ボタンを押してください。<strong>✕</strong> ボタンで削除できます。</p>
+        <div class="tip">
+            <div class="tip-icon">💡</div>
+            <div class="tip-body">
+                単価を変えながら期待値がどう変わるかをリアルタイムで確認できます。シミュレーションを実行しなくても理論値（期待値）は即座に更新されます。
+            </div>
+        </div>
+    </div>
+
+    <div class="guide-footer">
+        <p>準備ができたらシミュレーターに戻って試してみてください</p>
+        <a href="index.html" class="btn-main">▶ シミュレーターを開く</a>
+    </div>
+
+</div>
+
+<script>
+function toggleTheme() {
+    const isLight = document.documentElement.classList.contains('light');
+    const next = isLight ? 'dark' : 'light';
+    document.documentElement.classList.toggle('light', next === 'light');
+    document.getElementById('theme-icon').textContent = next === 'light' ? '☾' : '☀';
+    localStorage.setItem('theme', next);
+}
+if (localStorage.getItem('theme') === 'light') {
+    document.documentElement.classList.add('light');
+    document.getElementById('theme-icon').textContent = '☾';
+}
+</script>
+</body>
+</html>

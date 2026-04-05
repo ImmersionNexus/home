@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <title>犯罪報酬シミュレーター</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <div class="header-inner">
+            <div class="logo">
+                <span class="logo-dot"></span>
+                犯罪報酬シミュレーター
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+                <div class="header-meta">CRIME REWARD SIM v2.0</div>
+                <a href="guide.html" class="btn-guide">? ガイド</a>
+                <button id="theme-toggle" class="theme-toggle" onclick="toggleTheme()" title="テーマ切替">
+                    <span id="theme-icon">☀</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="main">
+
+        <!-- ── 左カラム ── -->
+        <div class="items">
+
+            <div class="panel">
+                <div class="panel-header">
+                    <span class="panel-title">報酬内容の設定</span>
+                    <span class="panel-badge" id="item-count-badge">0 items</span>
+                </div>
+
+                <!-- フォーム -->
+                <div id="item-input">
+                    <div class="form-row">
+                        <label class="form-label" for="item-name">アイテム名</label>
+                        <input type="text" id="item-name" class="form-input" placeholder="例: ms_ammo_pistol" />
+                    </div>
+
+                    <div class="form-row">
+                        <label class="form-label">個数タイプ</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="amount-type" value="fixed" checked />
+                                <span class="radio-custom"></span>
+                                固定値
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="amount-type" value="random" />
+                                <span class="radio-custom"></span>
+                                ランダム
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="static-input" class="form-row">
+                        <label class="form-label" for="static-amount">個数</label>
+                        <input type="number" id="static-amount" class="form-input form-input-sm" min="1" value="1" />
+                    </div>
+
+                    <div id="dynamic-input" class="form-row" style="display:none">
+                        <label class="form-label">個数（範囲）</label>
+                        <div class="range-inputs">
+                            <input type="number" id="random-min" class="form-input" min="1" value="1" placeholder="最小" />
+                            <span class="range-sep">〜</span>
+                            <input type="number" id="random-max" class="form-input" min="1" value="1" placeholder="最大" />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label class="form-label">売却単価タイプ</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="price-type" value="fixed" checked />
+                                <span class="radio-custom"></span>
+                                固定値
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="price-type" value="random" />
+                                <span class="radio-custom"></span>
+                                ランダム
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="price-static-input" class="form-row">
+                        <label class="form-label" for="sell-price">売却単価（円）</label>
+                        <input type="number" id="sell-price" class="form-input" min="0" step="1000" placeholder="例: 400000" />
+                    </div>
+
+                    <div id="price-dynamic-input" class="form-row" style="display:none">
+                        <label class="form-label">売却単価（範囲）</label>
+                        <div class="range-inputs">
+                            <input type="number" id="price-min" class="form-input" min="0" step="1000" placeholder="最小" />
+                            <span class="range-sep">〜</span>
+                            <input type="number" id="price-max" class="form-input" min="0" step="1000" placeholder="最大" />
+                        </div>
+                    </div>
+
+                    <div class="form-row-2col">
+                        <div class="form-row">
+                            <label class="form-label" for="drop-rate">
+                                ドロップ確率
+                                <span class="form-unit">%</span>
+                            </label>
+                            <input type="number" id="drop-rate" class="form-input" min="0" max="100" step="1" value="100" />
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label" for="drop-count">
+                                ドロップ数
+                                <span class="form-hint">（試行回数）</span>
+                            </label>
+                            <input type="number" id="drop-count" class="form-input" min="1" value="1" />
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button id="add-row" class="btn btn-primary" onclick="addLine()">
+                            <span id="add-btn-text">+ 追加</span>
+                        </button>
+                        <button id="cancel-edit" class="btn btn-ghost" onclick="cancelEdit()" style="display:none">
+                            キャンセル
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- アイテム一覧 -->
+            <div class="panel" id="item-list-panel">
+                <div class="panel-header">
+                    <span class="panel-title">追加済みアイテム</span>
+                </div>
+                <div id="item-list">
+                    <p class="item-list-empty">アイテムを追加してください</p>
+                </div>
+            </div>
+
+            <!-- シミュレーション実行 -->
+            <div class="panel" id="simulate">
+                <div class="panel-header">
+                    <span class="panel-title">シミュレーション設定</span>
+                </div>
+                <div class="form-row-2col">
+                    <div class="form-row">
+                        <label class="form-label" for="simulate-amount">試行回数</label>
+                        <select id="simulate-amount" class="form-select">
+                            <option value="10000">10,000 回</option>
+                            <option value="50000" selected>50,000 回</option>
+                            <option value="100000">100,000 回</option>
+                            <option value="200000">200,000 回</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <label class="form-label" for="target-mean">目標平均額（万円）</label>
+                        <input type="number" id="target-mean" class="form-input" value="5000" min="0" step="100" />
+                    </div>
+                </div>
+                <button id="btn-simulate" class="btn btn-run" onclick="simulateStart()">
+                    ▶ シミュレーション実行
+                </button>
+                <div class="progress-bar" id="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+
+        </div><!-- /items -->
+
+        <!-- ── 右カラム ── -->
+        <div class="simulation-result">
+
+            <!-- 期待値 -->
+            <div id="ev-display">
+                <span class="ev-label">期待値（理論値）</span>
+                <span class="ev-value" id="ev-value">—</span>
+                <span class="ev-target" id="ev-target-diff"></span>
+            </div>
+
+            <!-- 統計サマリー -->
+            <div id="stats-grid">
+                <div class="stat-card stat-highlight">
+                    <div class="stat-label">平均</div>
+                    <div class="stat-value" id="stat-mean">—</div>
+                    <div class="stat-diff" id="stat-mean-diff">シミュ未実行</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">中央値</div>
+                    <div class="stat-value" id="stat-median">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">標準偏差</div>
+                    <div class="stat-value" id="stat-sd">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">最小</div>
+                    <div class="stat-value" id="stat-min">—</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">最大</div>
+                    <div class="stat-value" id="stat-max">—</div>
+                </div>
+            </div>
+
+            <!-- 分布グラフ -->
+            <div class="panel" id="chart-panel">
+                <div class="chart-header">
+                    <span class="chart-title">報酬分布</span>
+                    <div class="chart-legend">
+                        <span class="legend-item legend-result">
+                            <span class="legend-dot"></span>シミュレーション結果
+                        </span>
+                        <span class="legend-item legend-target">
+                            <span class="legend-dash"></span>目標平均額
+                        </span>
+                    </div>
+                </div>
+                <div class="chart-wrap">
+                    <canvas id="result-chart"></canvas>
+                </div>
+                <p class="chart-empty" id="chart-empty">シミュレーション実行後に表示されます</p>
+            </div>
+
+            <!-- 内訳テーブル -->
+            <div class="panel" id="breakdown-panel">
+                <div class="panel-header">
+                    <span class="panel-title">アイテム別 期待値内訳</span>
+                </div>
+                <div class="table-wrap">
+                    <table id="breakdown-table">
+                        <thead>
+                            <tr>
+                                <th>アイテム名</th>
+                                <th>個数</th>
+                                <th>単価</th>
+                                <th>確率</th>
+                                <th>試行</th>
+                                <th>期待値</th>
+                                <th>割合</th>
+                            </tr>
+                        </thead>
+                        <tbody id="breakdown-body">
+                            <tr><td colspan="7" class="breakdown-empty">アイテムを追加してください</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div><!-- /simulation-result -->
+    </div><!-- /main -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
